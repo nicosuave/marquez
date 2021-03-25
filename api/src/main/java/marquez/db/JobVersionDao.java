@@ -29,8 +29,10 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Stream;
 import lombok.Value;
+import marquez.api.models.JobVersion;
 import marquez.common.Utils;
 import marquez.db.mappers.ExtendedJobVersionRowMapper;
+import marquez.db.mappers.JobVersionMapper;
 import marquez.db.models.ExtendedDatasetVersionRow;
 import marquez.db.models.ExtendedJobVersionRow;
 import marquez.db.models.JobContextRow;
@@ -42,11 +44,18 @@ import org.jdbi.v3.sqlobject.statement.SqlQuery;
 import org.jdbi.v3.sqlobject.statement.SqlUpdate;
 
 @RegisterRowMapper(ExtendedJobVersionRowMapper.class)
+@RegisterRowMapper(JobVersionMapper.class)
 public interface JobVersionDao extends BaseDao {
+  // ...
   enum IoType {
     INPUT,
     OUTPUT;
   }
+
+  String BASE_SELECT_ON_JOB_VERSIONS =
+      "SELECT jv.*, jc.context FROM job_versions AS jv "
+          + "LEFT OUTER JOIN job_contexts AS jc "
+          + "  ON jc.uuid = jv.job_context_uuid ";
 
   @SqlUpdate(
       "UPDATE job_versions "
@@ -99,6 +108,17 @@ public interface JobVersionDao extends BaseDao {
           + "job_version_uuid, dataset_uuid, io_type) "
           + "VALUES (:jobVersionUuid, :datasetUuid, :ioType) ON CONFLICT DO NOTHING")
   void upsertDatasetIoMapping(UUID jobVersionUuid, UUID datasetUuid, IoType ioType);
+
+  @SqlQuery(
+      BASE_SELECT_ON_JOB_VERSIONS
+          + "WHERE namespace_name = :namespaceName AND job_name  = :jobName AND jv.uuid = :jobVersionUuid")
+  Optional<JobVersion> findJobVersion(String namespaceName, String jobName, UUID jobVersionUuid);
+
+  @SqlQuery(
+      BASE_SELECT_ON_JOB_VERSIONS
+          + "WHERE namespace_name = :namespaceName AND job_name = :jobName "
+          + "LIMIT :limit OFFSET :offset")
+  List<JobVersion> findAllJobVersions(String namespaceName, String jobName, int limit, int offset);
 
   default JobVersionBag createJobVersionOnComplete(
       Instant transitionedAt, UUID runUuid, String namespaceName, String jobName) {

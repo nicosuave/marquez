@@ -121,7 +121,7 @@ public abstract class BaseIntegrationTest {
   protected static final URL JOB_LOCATION = newLocation();
   protected static final ImmutableMap<String, String> JOB_CONTEXT = newContext();
   protected static final String JOB_DESCRIPTION = newDescription();
-  final JobMeta JOB_META =
+  protected static final JobMeta JOB_META =
       JobMeta.builder()
           .type(JOB_TYPE)
           .inputs(ImmutableSet.of())

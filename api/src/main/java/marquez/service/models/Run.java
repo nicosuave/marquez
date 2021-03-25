@@ -43,7 +43,7 @@ public final class Run {
   @Getter private final Map<String, String> args;
   private final String namespaceName;
   private final String jobName;
-  @Getter private final String location;
+  private final String location;
   @Getter private final Map<String, String> context;
 
   public Run(
@@ -105,5 +105,10 @@ public final class Run {
   @JsonIgnore
   public String getJobName() {
     return jobName;
+  }
+
+  @JsonIgnore
+  public String getLocation() {
+    return location;
   }
 }

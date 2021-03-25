@@ -90,7 +90,7 @@ public final class MarquezContext {
       runTransitionListeners = new ArrayList<>();
     }
 
-    BaseDao baseDao = jdbi.onDemand(NamespaceDao.class);
+    final BaseDao baseDao = jdbi.onDemand(NamespaceDao.class);
     this.namespaceDao = jdbi.onDemand(NamespaceDao.class);
     this.sourceDao = jdbi.onDemand(SourceDao.class);
     this.datasetDao = jdbi.onDemand(DatasetDao.class);
@@ -116,7 +116,7 @@ public final class MarquezContext {
     this.tagService.init(tags);
     this.openLineageService = new OpenLineageService(baseDao, runService);
     this.jdbiException = new JdbiExceptionExceptionMapper();
-    ServiceFactory serviceFactory =
+    final ServiceFactory serviceFactory =
         ServiceFactory.builder()
             .datasetService(datasetService)
             .jobService(jobService)
@@ -131,7 +131,7 @@ public final class MarquezContext {
     this.namespaceResource = new NamespaceResource(serviceFactory);
     this.sourceResource = new SourceResource(serviceFactory);
     this.datasetResource = new DatasetResource(serviceFactory);
-    this.jobResource = new JobResource(serviceFactory);
+    this.jobResource = new JobResource(serviceFactory, jobVersionDao);
     this.tagResource = new TagResource(serviceFactory);
     this.openLineageResource = new OpenLineageResource(serviceFactory);
 

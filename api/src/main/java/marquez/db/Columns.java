@@ -14,6 +14,8 @@
 
 package marquez.db;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.google.common.collect.ImmutableMap;
 import java.math.BigDecimal;
 import java.net.MalformedURLException;
 import java.net.URI;
@@ -26,6 +28,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 import lombok.extern.slf4j.Slf4j;
+import marquez.common.Utils;
 import org.postgresql.util.PGInterval;
 
 @Slf4j
@@ -219,5 +222,14 @@ public final class Columns {
       log.error("Could not read source URI", e);
       return null;
     }
+  }
+
+  public static ImmutableMap<String, String> mapOrNull(final ResultSet results, final String column)
+      throws SQLException {
+    if (results.getString(column) == null) {
+      return null;
+    }
+    final String mapAsString = results.getString(column);
+    return Utils.fromJson(mapAsString, new TypeReference<>() {});
   }
 }
