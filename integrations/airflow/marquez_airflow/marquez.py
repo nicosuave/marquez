@@ -8,7 +8,7 @@ from marquez_airflow import __version__ as MARQUEZ_AIRFLOW_VERSION
 from openlineage.client import OpenLineageClient
 from openlineage.facet import DocumentationJobFacet, SourceCodeLocationJobFacet, SqlJobFacet, \
     NominalTimeRunFacet, ParentRunFacet, BaseFacet
-from openlineage.run import RunEvent, RunState, Run, Job
+from openlineage.run import RunEvent, RunState, Run, Job, Serde
 
 _DAG_DEFAULT_OWNER = 'anonymous'
 _DAG_DEFAULT_NAMESPACE = 'default'
@@ -43,7 +43,7 @@ class MarquezAdapter:
             nominal_start_time: str,
             nominal_end_time: str,
             step: Optional[StepMetadata],
-            run_facets: Optional[Dict[str, Type[BaseFacet]]] = None  # Custom run facets
+            run_facets: Optional[Dict[str, Type[BaseFacet]]] = None,  # Custom run facets
     ) -> str:
         """
         Emits openlineage event of type START
@@ -74,10 +74,10 @@ class MarquezAdapter:
             ),
             producer=f"marquez-airflow/{MARQUEZ_AIRFLOW_VERSION}",
             inputs=[
-                dataset.to_openlineage_dataset(_DAG_NAMESPACE) for dataset in step.inputs
+                dataset.to_openlineage_dataset() for dataset in step.inputs
             ] if step else None,
             outputs=[
-                dataset.to_openlineage_dataset(_DAG_NAMESPACE) for dataset in step.outputs
+                dataset.to_openlineage_dataset() for dataset in step.outputs
             ] if step else None
         )
         self.get_or_create_openlineage_client().emit(event)
@@ -111,13 +111,14 @@ class MarquezAdapter:
                 job_name, sql=sql
             ),
             inputs=[
-                dataset.to_openlineage_dataset(_DAG_NAMESPACE) for dataset in step.inputs
+                dataset.to_openlineage_dataset() for dataset in step.inputs
             ],
             outputs=[
-                dataset.to_openlineage_dataset(_DAG_NAMESPACE) for dataset in step.outputs
+                dataset.to_openlineage_dataset() for dataset in step.outputs
             ],
             producer=f"marquez-airflow/{MARQUEZ_AIRFLOW_VERSION}"
         )
+        log.error(Serde.to_json(event))
         self.get_or_create_openlineage_client().emit(event)
 
     def fail_task(
@@ -144,10 +145,10 @@ class MarquezAdapter:
                 job_name
             ),
             inputs=[
-                dataset.to_openlineage_dataset(_DAG_NAMESPACE) for dataset in step.inputs
+                dataset.to_openlineage_dataset() for dataset in step.inputs
             ],
             outputs=[
-                dataset.to_openlineage_dataset(_DAG_NAMESPACE) for dataset in step.outputs
+                dataset.to_openlineage_dataset() for dataset in step.outputs
             ],
             producer=f"marquez-airflow/{MARQUEZ_AIRFLOW_VERSION}"
         )
