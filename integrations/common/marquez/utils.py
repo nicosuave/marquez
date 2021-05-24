@@ -13,7 +13,6 @@
 from typing import Dict, Any, List, Optional
 
 
-
 def get_from_nullable_chain(source: Dict[str, Any], chain: List[str]) -> Optional[Any]:
     """
     Get object from nested structure of dictionaries, where it's not guaranteed that
