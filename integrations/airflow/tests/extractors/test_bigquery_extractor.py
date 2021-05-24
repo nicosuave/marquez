@@ -23,8 +23,6 @@ from airflow.contrib.operators.bigquery_operator import BigQueryOperator
 from airflow.models import TaskInstance, DAG
 from airflow.utils.state import State
 
-from marquez_airflow.utils import get_from_nullable_chain
-
 from marquez_airflow.extractors.bigquery_extractor import BigQueryExtractor
 from marquez.provider.bigquery import BigQueryStatisticsRunFacet, BigQueryStatisticsDatasetFacet, \
     BigQueryErrorRunFacet
