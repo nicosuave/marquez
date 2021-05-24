@@ -14,7 +14,6 @@ import logging
 import os
 import subprocess
 import json
-from typing import Dict, Any, List, Optional
 
 import airflow
 from airflow.models import Connection
