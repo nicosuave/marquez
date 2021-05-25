@@ -17,7 +17,6 @@ from typing import Optional
 
 from airflow.contrib.operators.bigquery_operator import BigQueryOperator
 import attr
-from marquez.dataset import Source
 
 from marquez.provider.bigquery import BigQueryStatisticsProvider, BigQueryErrorRunFacet
 
