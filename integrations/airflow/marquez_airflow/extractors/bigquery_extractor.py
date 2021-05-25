@@ -20,7 +20,7 @@ import attr
 
 from marquez.provider.bigquery import BigQueryStatisticsProvider, BigQueryErrorRunFacet
 
-from marquez_airflow.extractors import (
+from marquez_airflow.extractors.base import (
     BaseExtractor,
     StepMetadata
 )
