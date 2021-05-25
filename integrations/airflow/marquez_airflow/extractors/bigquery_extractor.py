@@ -48,21 +48,8 @@ class BigQueryExtractor(BaseExtractor):
     def __init__(self, operator: BigQueryOperator):
         super().__init__(operator)
 
-    def _source(self, bq_table) -> Source:
-        conn_id = self.operator.bigquery_conn_id
-        return Source(
-            type="BIGQUERY",
-            name=conn_id,
-            connection_url=_BIGQUERY_CONN_URL.format(self._bq_table_name(bq_table)))
-
     def extract(self) -> Optional[StepMetadata]:
         return None
-
-    def _bq_table_name(self, bq_table):
-        project = bq_table.get('projectId')
-        dataset = bq_table.get('datasetId')
-        table = bq_table.get('tableId')
-        return f"{project}.{dataset}.{table}"
 
     def extract_on_complete(self, task_instance) -> Optional[StepMetadata]:
         log.debug(f"extract_on_complete({task_instance})")
