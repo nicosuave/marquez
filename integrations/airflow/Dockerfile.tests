@@ -7,5 +7,5 @@ COPY airflow/marquez_airflow /app/marquez_airflow
 COPY airflow/openlineage /app/openlineage
 WORKDIR /app
 RUN ls -la
-RUN pip wheel --wheel-dir=/app/wheel .
+RUN pip wheel --wheel-dir=/app/wheel .[tests]
 RUN cp -R /app/wheel /whl
