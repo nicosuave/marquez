@@ -9,16 +9,15 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+import textwrap
 from contextlib import closing
-from typing import Optional
 
 from airflow.hooks.postgres_hook import PostgresHook
 from airflow.operators.postgres_operator import PostgresOperator
 
 from marquez.models import (
     DbTableName,
-    DbTableSchema,
-    DbColumn
+    DbTableSchema
 )
 from marquez_airflow.utils import get_connection_uri
 from marquez.sql import SqlMeta, SqlParser
@@ -27,15 +26,7 @@ from marquez_airflow.extractors.base import (
     StepMetadata
 )
 from marquez.dataset import Source, Dataset
-
-
-_TABLE_SCHEMA = 0
-_TABLE_NAME = 1
-_COLUMN_NAME = 2
-_ORDINAL_POSITION = 3
-# Use 'udt_name' which is the underlying type of column
-# (ex: int4, timestamp, varchar, etc)
-_UDT_NAME = 4
+from marquez.provider.postgres import get_table_schemas
 
 
 class PostgresExtractor(BaseExtractor):
@@ -94,7 +85,7 @@ class PostgresExtractor(BaseExtractor):
         return self.operator.postgres_conn_id
 
     def _information_schema_query(self, table_names: str) -> str:
-        return f"""
+        return textwrap.dedent(f"""
         SELECT table_schema,
         table_name,
         column_name,
@@ -102,7 +93,7 @@ class PostgresExtractor(BaseExtractor):
         udt_name
         FROM information_schema.columns
         WHERE table_name IN ({table_names});
-        """
+        """)
 
     def _get_hook(self):
         return PostgresHook(
@@ -118,40 +109,10 @@ class PostgresExtractor(BaseExtractor):
         if not table_names:
             return []
 
-        # Keeps tack of the schema by table.
-        schemas_by_table = {}
-
         hook = self._get_hook()
         with closing(hook.get_conn()) as conn:
-            with closing(conn.cursor()) as cursor:
-                table_names_as_str = ",".join(map(
-                    lambda name: f"'{name.name}'", table_names
-                ))
-                cursor.execute(
-                    self._information_schema_query(table_names_as_str)
-                )
-                for row in cursor.fetchall():
-                    table_schema_name: str = row[_TABLE_SCHEMA]
-                    table_name: DbTableName = DbTableName(row[_TABLE_NAME])
-                    table_column: DbColumn = DbColumn(
-                        name=row[_COLUMN_NAME],
-                        type=row[_UDT_NAME],
-                        ordinal_position=row[_ORDINAL_POSITION]
-                    )
-
-                    # Attempt to get table schema
-                    table_key: str = f"{table_schema_name}.{table_name}"
-                    table_schema: Optional[DbTableSchema] = schemas_by_table.get(table_key)
-
-                    if table_schema:
-                        # Add column to existing table schema.
-                        schemas_by_table[table_key].columns.append(table_column)
-                    else:
-                        # Create new table schema with column.
-                        schemas_by_table[table_key] = DbTableSchema(
-                            schema_name=table_schema_name,
-                            table_name=table_name,
-                            columns=[table_column]
-                        )
-
-        return list(schemas_by_table.values())
+            table_names_as_str = ",".join(map(
+                lambda name: f"'{name.name}'", table_names
+            ))
+            schema_query = self._information_schema_query(table_names_as_str)
+            return get_table_schemas(conn, schema_query)
