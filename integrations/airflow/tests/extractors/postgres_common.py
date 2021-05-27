@@ -1,14 +1,10 @@
-from unittest.mock import MagicMock
-
-from airflow import DAG
 from airflow.operators.postgres_operator import PostgresOperator
 from airflow.utils.dates import days_ago
+from airflow import DAG as AIRFLOW_DAG
 from marquez.models import DbTableName, DbColumn, DbTableSchema
-from marquez.provider.postgres import get_table_schemas
 
 CONN_ID = 'food_delivery_db'
 CONN_URI = 'postgres://localhost:5432/food_delivery'
-
 DB_SCHEMA_NAME = 'public'
 DB_TABLE_NAME = DbTableName('discounts')
 DB_TABLE_COLUMNS = [
@@ -44,9 +40,7 @@ DB_TABLE_SCHEMA = DbTableSchema(
     columns=DB_TABLE_COLUMNS
 )
 NO_DB_TABLE_SCHEMA = []
-
 SQL = f"SELECT * FROM {DB_TABLE_NAME.name};"
-
 DAG_ID = 'email_discounts'
 DAG_OWNER = 'datascience'
 DAG_DEFAULT_ARGS = {
@@ -59,46 +53,19 @@ DAG_DEFAULT_ARGS = {
 }
 DAG_DESCRIPTION = \
     'Email discounts to customers that have experienced order delays daily'
+TASK_ID = 'select'
 
-DAG = dag = DAG(
+
+DAG = dag = AIRFLOW_DAG(
     DAG_ID,
     schedule_interval='@weekly',
     default_args=DAG_DEFAULT_ARGS,
     description=DAG_DESCRIPTION
 )
 
-TASK_ID = 'select'
 TASK = PostgresOperator(
     task_id=TASK_ID,
     postgres_conn_id=CONN_ID,
     sql=SQL,
     dag=DAG
 )
-
-
-def test_get_table_schemas():
-    # (1) Mock calls to postgres
-    rows = [
-        (DB_SCHEMA_NAME, DB_TABLE_NAME.name, 'id', 1, 'int4'),
-        (DB_SCHEMA_NAME, DB_TABLE_NAME.name, 'amount_off', 2, 'int4'),
-        (DB_SCHEMA_NAME, DB_TABLE_NAME.name, 'customer_email', 3, 'varchar'),
-        (DB_SCHEMA_NAME, DB_TABLE_NAME.name, 'starts_on', 4, 'timestamp'),
-        (DB_SCHEMA_NAME, DB_TABLE_NAME.name, 'ends_on', 5, 'timestamp')
-    ]
-
-    mock_conn = MagicMock()
-    mock_conn.cursor.return_value \
-        .fetchall.return_value = rows
-
-    # (2) Extract table schemas for task
-    table_schemas = get_table_schemas(mock_conn, """
-        SELECT table_schema,
-        table_name,
-        column_name,
-        ordinal_position,
-        udt_name
-        FROM information_schema.columns
-        WHERE table_name IN ('discounts');
-    """)
-
-    assert table_schemas == [DB_TABLE_SCHEMA]

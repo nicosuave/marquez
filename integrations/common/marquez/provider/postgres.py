@@ -44,4 +44,3 @@ def get_table_schemas(conn, schema_query: str):
                     columns=[table_column]
                 )
         return list(schemas_by_table.values())
-

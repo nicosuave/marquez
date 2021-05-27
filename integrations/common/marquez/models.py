@@ -21,9 +21,9 @@ class DbColumn:
 
     def __eq__(self, other):
         return self.name == other.name and \
-               self.type == other.type and \
-               self.description == other.description and \
-               self.ordinal_position == other.ordinal_position
+            self.type == other.type and \
+            self.description == other.description and \
+            self.ordinal_position == other.ordinal_position
 
     def __repr__(self):
         return f"DbColumn({self.name!r},{self.type!r}, \
@@ -77,9 +77,9 @@ class DbTableName:
 
     def __eq__(self, other):
         return self.database == other.database and \
-               self.schema == other.schema and \
-               self.name == other.name and \
-               self.qualified_name == other.qualified_name
+            self.schema == other.schema and \
+            self.name == other.name and \
+            self.qualified_name == other.qualified_name
 
     def __repr__(self):
         # Return the string representation of the instance
@@ -106,8 +106,8 @@ class DbTableSchema:
 
     def __eq__(self, other):
         return self.schema_name == other.schema_name and \
-               self.table_name == other.table_name and \
-               self.columns == other.columns
+            self.table_name == other.table_name and \
+            self.columns == other.columns
 
     def __repr__(self):
         return f"DbTableSchema({self.schema_name!r},{self.table_name!r}, \

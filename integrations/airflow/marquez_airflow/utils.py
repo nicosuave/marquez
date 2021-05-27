@@ -184,7 +184,7 @@ class DagUtils:
         if not dt:
             return None
         if isinstance(dt, int):
-            dt = from_timestamp(dt/1000.0)
+            dt = from_timestamp(dt / 1000.0)
 
         if isinstance(dt, Pendulum):
             return dt.format(_NOMINAL_TIME_FORMAT)

@@ -36,8 +36,8 @@ class Source:
 
     def __eq__(self, other):
         return self.name == other.name and \
-               self.type == other.type and \
-               self.connection_url == other.connection_url
+            self.type == other.type and \
+            self.connection_url == other.connection_url
 
     def __repr__(self):
         return f"Source({self.name!r},{self.type!r},{self.connection_url!r})"
@@ -64,9 +64,9 @@ class Field:
 
     def __eq__(self, other):
         return self.name == other.name and \
-               self.type == other.type and \
-               self.tags == other.tags and \
-               self.description == other.description
+            self.type == other.type and \
+            self.tags == other.tags and \
+            self.description == other.description
 
     def __repr__(self):
         return f"Field({self.name!r},{self.type!r}, \
@@ -125,10 +125,10 @@ class Dataset:
 
     def __eq__(self, other):
         return self.source == other.source and \
-               self.name == other.name and \
-               self.type == other.type and \
-               self.fields == other.fields and \
-               self.description == other.description
+            self.name == other.name and \
+            self.type == other.type and \
+            self.fields == other.fields and \
+            self.description == other.description
 
     def __repr__(self):
         return f"Dataset({self.source!r},{self.name!r}, \

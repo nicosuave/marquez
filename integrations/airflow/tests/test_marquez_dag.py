@@ -485,7 +485,7 @@ def test_marquez_dag_with_extract_on_complete(
                     job_name=f"{dag_id}.{TASK_ID_COMPLETED}"
                 )
             }),
-            job=Job("default",  f"{dag_id}.{TASK_ID_COMPLETED}", {
+            job=Job("default", f"{dag_id}.{TASK_ID_COMPLETED}", {
                 "documentation": DocumentationJobFacet(DAG_DESCRIPTION),
                 "sourceCodeLocation": SourceCodeLocationJobFacet("", completed_task_location)
             }),
@@ -728,30 +728,30 @@ def test_marquez_dag_adds_custom_facets(
     end_time = '2016-01-02T00:00:00.000000Z'
 
     mock_openlineage_client.emit.assert_called_once_with(RunEvent(
-            eventType=RunState.START,
-            eventTime=mock.ANY,
-            run=Run(run_id_completed, {
-                "nominalTime": NominalTimeRunFacet(start_time, end_time),
-                "parentRun": ParentRunFacet.create(
-                    runId=DAG_RUN_ID,
-                    namespace=DAG_NAMESPACE,
-                    job_name=f"{DAG_ID}.{TASK_ID_COMPLETED}"
-                ),
-                "airflow_runArgs": AirflowRunArgsRunFacet(False),
-                "airflow_version": AirflowVersionRunFacet(
-                    operator="airflow.operators.dummy_operator.DummyOperator",
-                    taskInfo=mock.ANY,
-                    airflowVersion=AIRFLOW_VERSION,
-                    marquezAirflowVersion=MARQUEZ_AIRFLOW_VERSION
-                )
-            }),
-            job=Job("default", f"{DAG_ID}.{TASK_ID_COMPLETED}", {
-                "documentation": DocumentationJobFacet(DAG_DESCRIPTION),
-                "sourceCodeLocation": SourceCodeLocationJobFacet("", completed_task_location)
-            }),
-            producer=PRODUCER,
-            inputs=[],
-            outputs=[]
+        eventType=RunState.START,
+        eventTime=mock.ANY,
+        run=Run(run_id_completed, {
+            "nominalTime": NominalTimeRunFacet(start_time, end_time),
+            "parentRun": ParentRunFacet.create(
+                runId=DAG_RUN_ID,
+                namespace=DAG_NAMESPACE,
+                job_name=f"{DAG_ID}.{TASK_ID_COMPLETED}"
+            ),
+            "airflow_runArgs": AirflowRunArgsRunFacet(False),
+            "airflow_version": AirflowVersionRunFacet(
+                operator="airflow.operators.dummy_operator.DummyOperator",
+                taskInfo=mock.ANY,
+                airflowVersion=AIRFLOW_VERSION,
+                marquezAirflowVersion=MARQUEZ_AIRFLOW_VERSION
+            )
+        }),
+        job=Job("default", f"{DAG_ID}.{TASK_ID_COMPLETED}", {
+            "documentation": DocumentationJobFacet(DAG_DESCRIPTION),
+            "sourceCodeLocation": SourceCodeLocationJobFacet("", completed_task_location)
+        }),
+        producer=PRODUCER,
+        inputs=[],
+        outputs=[]
     ))
 
 
