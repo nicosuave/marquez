@@ -19,6 +19,10 @@ from setuptools import find_packages, setup
 with open("README.md") as readme_file:
     readme = readme_file.read()
 
+package_name = "marquez-integration-common"
+package_version = "0.15.2"
+description = """Marquez common python library for integrations"""
+
 requirements = [
     "attrs>=19.3.0",
     "openlineage-python==0.0.1rc6",
@@ -43,8 +47,8 @@ extras_require = {
 extras_require["dev"] = set(sum(extras_require.values(), []))
 
 setup(
-    name="marquez-integration-common",
-    version="0.15.2",
+    name=package_name,
+    version=package_version,
     description="Marquez common python library",
     long_description=readme,
     long_description_content_type="text/markdown",

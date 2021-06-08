@@ -20,7 +20,7 @@ from marquez_airflow.extractors.great_expectations_extractor import \
 from great_expectations_provider.operators.great_expectations import GreatExpectationsOperator
 
 from marquez_airflow.facets import DataQualityDatasetFacet, ColumnMetric
-from openlineage.run import Serde
+from openlineage.serde import Serde
 
 log = logging.getLogger(__name__)
 

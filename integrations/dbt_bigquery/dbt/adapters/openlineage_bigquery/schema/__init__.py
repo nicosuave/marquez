@@ -10,8 +10,4 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-DEFAULT_TIMEOUT_MS = 10000
-DEFAULT_NAMESPACE_NAME = 'default'
-DEFAULT_MARQUEZ_BACKEND = 'http'
-DEFAULT_MARQUEZ_URL = 'http://localhost:5000'
-DEFAULT_PRODUCER = "marquez-airflow"  # TODO: mechanism for setting producer
+GITHUB_LOCATION = "https://github.com/MarquezProject/marquez/blob/main/integrations/dbt/adapters/openlineage_bigquery/provider/schema/"  # noqa: E501
